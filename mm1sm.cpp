@@ -20,7 +20,7 @@ void initialize(void);
 void timing(void);
 void arrival(void);
 void departure(void);
-void reports(void);
+void report(void);
 void update_average_wait_time(void);
 float exponential(float mean);
 
@@ -68,8 +68,8 @@ int main(void) /* Main function */
         }
     }
 
-    /* Generate the reports and end the simulation */
-    reports();
+    /* Generate the report and end the simulation */
+    report();
 
     fclose(parameters);
     fclose(results);
@@ -204,7 +204,7 @@ void departure(void) /* Departure function */
             arrival_time[i] = arrival_time[i + 1];
     }
 }
-void reports(void) /* Report generation function */
+void report(void) /* Report generation function */
 {
     /* Calculate and estimate the desired performance measures */
     fprintf(results, "\n\nAverage wait time in the queue%11.3f minutes\n\n",
