@@ -13,7 +13,7 @@ int next_event_type, num_customers_waiting, required_wait_count, num_events,
     num_arrivals_queue, server_status;
 float area_num_arrivals_queue, area_server_status, mean_interarrival, mean_service,
     simulation_time, arrival_time[QUEUE_LIMIT + 1], last_event_time, next_event_time[3],
-    total_wait_time;
+    total_wait_time, erlang_c_value;
 FILE *parameters, *results;
 
 void initialize(void);
@@ -26,8 +26,10 @@ void update_average_wait_time(void);
 int main(void) /* Main function */
 {
     /* Open input and output files */
+    printf("Reading input parameters from param.txt and writing results to result.txt\n");
     parameters = fopen("param.txt", "r");
     results = fopen("result.txt", "w");
+    printf("Successfully opened files\n");
 
     /* Set the number of events for the timing function */
     num_events = 2;
@@ -63,11 +65,14 @@ int main(void) /* Main function */
         }
     }
 
+    erlang_c_value = erlang_c(num_customers_waiting, mean_service);
     /* Generate the report and end the simulation */
     report_metrics(results, compute_metrics());
 
     fclose(parameters);
     fclose(results);
+
+    printf("Successfully closed files\n");
 
     return 0;
 }
@@ -208,6 +213,7 @@ float *compute_metrics()
     metrics[1] = area_num_arrivals_queue / simulation_time;
     metrics[2] = area_server_status / simulation_time;
     metrics[3] = simulation_time;
+    metrics[4] = erlang_c_value;
     return metrics;
 }
 
