@@ -38,11 +38,8 @@ int main(void) /* Main function */
            &required_wait_count);
 
     /* Write the report headers and initial parameters to the output file */
-    fprintf(results, "Simple Queue System\n\n");
-    fprintf(results, "Mean interarrival time%11.3f minutes\n\n",
-            mean_interarrival);
-    fprintf(results, "Mean service time%16.3f minutes\n\n", mean_service);
-    fprintf(results, "Number of customers%14d\n\n", required_wait_count);
+    // Refactor that into a function called init_report
+    init_report(results, mean_interarrival, mean_service, required_wait_count);
 
     /* Initialize the simulation */
     initialize();
