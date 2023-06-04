@@ -28,7 +28,7 @@ int main(void) /* Main function */
 {
     /* Open input and output files */
     parameters = fopen("param.txt", "r");
-    results = fopen("result02.txt", "w");
+    results = fopen("result.txt", "w");
 
     /* Set the number of events for the timing function */
     num_events = 2;
