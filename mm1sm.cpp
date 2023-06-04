@@ -1,9 +1,9 @@
 /* External definitions for simple queue system */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "lcgrand.cpp" /* Header for random number generator */
+#include "simstats.h"
+#include "reports.h"
 
 #define QUEUE_LIMIT 100 /* Maximum queue capacity */
 #define BUSY 1          /* Server busy indicator */
@@ -20,9 +20,9 @@ void initialize(void);
 void timing(void);
 void arrival(void);
 void departure(void);
+float *compute_metrics(void);
 void report(void);
 void update_average_wait_time(void);
-float exponential(float mean);
 
 int main(void) /* Main function */
 {
@@ -69,7 +69,7 @@ int main(void) /* Main function */
     }
 
     /* Generate the report and end the simulation */
-    report();
+    report_metrics(results, compute_metrics());
 
     fclose(parameters);
     fclose(results);
@@ -204,16 +204,16 @@ void departure(void) /* Departure function */
             arrival_time[i] = arrival_time[i + 1];
     }
 }
-void report(void) /* Report generation function */
+
+// Compute metrics returns the array of metrics for reporting
+float *compute_metrics()
 {
-    /* Calculate and estimate the desired performance measures */
-    fprintf(results, "\n\nAverage wait time in the queue%11.3f minutes\n\n",
-            total_wait_time / num_customers_waiting);
-    fprintf(results, "Average number in the queue%10.3f\n\n",
-            area_num_arrivals_queue / simulation_time);
-    fprintf(results, "Server utilization%15.3f\n\n",
-            area_server_status / simulation_time);
-    fprintf(results, "Time simulation ended%12.3f minutes", simulation_time);
+    float *metrics = static_cast<float *>(malloc(sizeof(float) * 4));
+    metrics[0] = total_wait_time / num_customers_waiting;
+    metrics[1] = area_num_arrivals_queue / simulation_time;
+    metrics[2] = area_server_status / simulation_time;
+    metrics[3] = simulation_time;
+    return metrics;
 }
 
 void update_average_wait_time(void) /* Update area accumulators for average statistics */
@@ -229,11 +229,4 @@ void update_average_wait_time(void) /* Update area accumulators for average stat
 
     /* Update the area under the server status indicator function */
     area_server_status += server_status * time_since_last_event;
-}
-
-float exponential(float mean) /* Exponential random variable generator function */
-{
-    /* Return an exponential random variable with mean "mean" */
-
-    return -mean * log(lcgrand(1));
 }
