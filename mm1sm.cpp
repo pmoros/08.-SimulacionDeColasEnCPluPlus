@@ -38,7 +38,6 @@ int main(void) /* Main function */
            &required_wait_count);
 
     /* Write the report headers and initial parameters to the output file */
-    // Refactor that into a function called init_report
     init_report(results, mean_interarrival, mean_service, required_wait_count);
 
     /* Initialize the simulation */
