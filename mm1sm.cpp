@@ -21,7 +21,6 @@ void timing(void);
 void arrival(void);
 void departure(void);
 float *compute_metrics(void);
-void report(void);
 void update_average_wait_time(void);
 
 int main(void) /* Main function */
