@@ -10,6 +10,7 @@ This is a simulation of a M/M/1 queueing system. The simulation is written in C+
 
 To build the simulation, run the following command:
 
+- `cp param.example.txt param.txt`
 - `g++ 'mm1sm.cpp' -o program`
 - `./program`
 
