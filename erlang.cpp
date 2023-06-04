@@ -8,7 +8,7 @@ float erlang_c(int num_of_clients, float mean_service);
 
 float erlang_c(int num_of_clients, float mean_service) {
     printf("a");
-    float traffic_intensity = num_of_clients * mean_service; // Traffic intensity in Erlangs unit
+    float traffic_intensity = num_of_clients * (mean_service / 60); // Traffic intensity in Erlangs unit = clients * hour
 
     float erlang_numerator = (pow(traffic_intensity, NUM_AGENTS) / factorial(NUM_AGENTS)) * (NUM_AGENTS / (NUM_AGENTS - traffic_intensity));
 
