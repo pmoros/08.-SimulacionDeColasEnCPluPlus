@@ -225,7 +225,7 @@ void update_average_wait_time(void) /* Update area accumulators for average stat
     last_event_time = simulation_time;
 
     /* Update the area under the queue length function */
-    area_num_arrivals_queue += num_customers_waiting * time_since_last_event;
+    area_num_arrivals_queue += num_arrivals_queue * time_since_last_event;
 
     /* Update the area under the server status indicator function */
     area_server_status += server_status * time_since_last_event;
