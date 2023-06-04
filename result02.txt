@@ -1,0 +1,17 @@
+Simple Queue System
+
+Mean interarrival time      7.000 minutes
+
+Mean service time           8.000 minutes
+
+Number of customers             5
+
+
+
+Average wait time in the queue     33.271 minutes
+
+Average number in the queue     2.051
+
+Server utilization          0.821
+
+Time simulation ended     648.786 minutes
