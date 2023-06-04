@@ -1,9 +1,10 @@
 /* External definitions for simple queue system */
 
+#include "erlang.cpp"  /* Erlang C function estimator */
+#include "lcgrand.cpp" /* Header for random number generator */
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include "lcgrand.cpp" /* Header for random number generator */
 
 #define QUEUE_LIMIT 100 /* Maximum queue capacity */
 #define BUSY 1          /* Server busy indicator */
@@ -13,7 +14,7 @@ int next_event_type, num_customers_waiting, required_wait_count, num_events,
     num_arrivals_queue, server_status;
 float area_num_arrivals_queue, area_server_status, mean_interarrival, mean_service,
     simulation_time, arrival_time[QUEUE_LIMIT + 1], last_event_time, next_event_time[3],
-    total_wait_time;
+    total_wait_time, erlang_c_estimation;
 FILE *parameters, *results;
 
 void initialize(void);
@@ -48,8 +49,7 @@ int main(void) /* Main function */
     initialize();
 
     /* Run the simulation until the required number of customers arrive */
-    while (num_customers_waiting < required_wait_count)
-    {
+    while (num_customers_waiting < required_wait_count) {
         /* Determine the next event */
         timing();
 
@@ -57,8 +57,7 @@ int main(void) /* Main function */
         update_average_wait_time();
 
         /* Invoke the appropriate event function */
-        switch (next_event_type)
-        {
+        switch (next_event_type) {
         case 1:
             arrival();
             break;
@@ -67,6 +66,12 @@ int main(void) /* Main function */
             break;
         }
     }
+
+    printf("asdasdasd");
+
+    erlang_c_estimation = erlang_c(required_wait_count, mean_service);
+
+    printf("aaaa");
 
     /* Generate the reports and end the simulation */
     reports();
@@ -92,6 +97,7 @@ void initialize(void) /* Initialization function */
     total_wait_time = 0.0;
     area_num_arrivals_queue = 0.0;
     area_server_status = 0.0;
+    erlang_c_estimation = 0.0;
 
     /* Initialize the event list. Since there are no customers, the departure
        event (end of service) is not considered */
@@ -107,18 +113,15 @@ void timing(void) /* Timing function */
     next_event_type = 0;
 
     /* Determine the type of event that should occur next */
-    for (i = 1; i <= num_events; ++i)
-    {
-        if (next_event_time[i] < min_next_event_time)
-        {
+    for (i = 1; i <= num_events; ++i) {
+        if (next_event_time[i] < min_next_event_time) {
             min_next_event_time = next_event_time[i];
             next_event_type = i;
         }
     }
 
     /* Check if the event list is empty */
-    if (next_event_type == 0)
-    {
+    if (next_event_type == 0) {
         /* The event list is empty, stop the simulation */
         fprintf(results, "\nThe event list is empty at time %f", simulation_time);
         exit(1);
@@ -136,15 +139,13 @@ void arrival(void) /* Arrival function */
     next_event_time[1] = simulation_time + exponential(mean_interarrival);
 
     /* Check if the server is BUSY */
-    if (server_status == BUSY)
-    {
+    if (server_status == BUSY) {
         /* Server is BUSY, increase the number of customers in the queue */
 
         ++num_arrivals_queue;
 
         /* Check for overflow condition */
-        if (num_arrivals_queue > QUEUE_LIMIT)
-        {
+        if (num_arrivals_queue > QUEUE_LIMIT) {
             /* The queue has overflowed, stop the simulation */
             fprintf(results, "\nOverflow of arrival time array at time");
             fprintf(results, " %f", simulation_time);
@@ -154,9 +155,7 @@ void arrival(void) /* Arrival function */
         /* There is still space in the queue, store the arrival time of the
             customer at the (new) end of arrival_time array */
         arrival_time[num_arrivals_queue] = simulation_time;
-    }
-    else
-    {
+    } else {
         /* The server is IDLE, so the arriving customer has wait time = 0
            (The following two lines of code are for clarity and do not affect
            the result of the simulation) */
@@ -178,15 +177,12 @@ void departure(void) /* Departure function */
     float wait_time;
 
     /* Check if the queue is empty */
-    if (num_arrivals_queue == 0)
-    {
+    if (num_arrivals_queue == 0) {
         /* The queue is empty, make the server IDLE and
         do not consider the departure event */
         server_status = IDLE;
         next_event_time[2] = 1.0e+30;
-    }
-    else
-    {
+    } else {
         /* The queue is not empty, decrease the number of customers in the queue */
         --num_arrivals_queue;
 
@@ -214,6 +210,7 @@ void reports(void) /* Report generation function */
     fprintf(results, "Server utilization%15.3f\n\n",
             area_server_status / simulation_time);
     fprintf(results, "Time simulation ended%12.3f minutes", simulation_time);
+    fprintf(results, "Erlang C function estimation is %1.3f", erlang_c_estimation);
 }
 
 void update_average_wait_time(void) /* Update area accumulators for average statistics */
