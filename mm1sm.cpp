@@ -13,7 +13,7 @@ int next_event_type, num_customers_waiting, required_wait_count, num_events,
     num_arrivals_queue, server_status;
 float area_num_arrivals_queue, area_server_status, mean_interarrival, mean_service,
     simulation_time, arrival_time[QUEUE_LIMIT + 1], last_event_time, next_event_time[3],
-    total_wait_time, erlang_c_value;
+    total_wait_time, erlang_c_value, delayed_user_count;
 FILE *parameters, *results;
 
 void initialize(void);
@@ -66,12 +66,14 @@ int main(void) /* Main function */
     }
 
     erlang_c_value = erlang_c(num_customers_waiting, mean_service);
+    printf("Erlang C value: %10.3f\n", erlang_c_value);
     /* Generate the report and end the simulation */
     report_metrics(results, compute_metrics());
 
     fclose(parameters);
     fclose(results);
 
+    printf("Delay probability: %10.3f\n", delayed_user_count / required_wait_count);
     printf("Successfully closed files\n");
 
     return 0;
@@ -176,6 +178,7 @@ void departure(void) /* Departure function */
 {
     int i;
     float wait_time;
+    wait_time = 0.0;
 
     /* Check if the queue is empty */
     if (num_arrivals_queue == 0)
@@ -187,6 +190,7 @@ void departure(void) /* Departure function */
     }
     else
     {
+        ++delayed_user_count;
         /* The queue is not empty, decrease the number of customers in the queue */
         --num_arrivals_queue;
 
