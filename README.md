@@ -8,6 +8,7 @@ This is a simulation of a M/M/1 queueing system. The simulation is written in C+
 
 # Build
 
+Create your param.txt file with your own parameters: `cp param.example.txt param.txt`
 To build the simulation, run the following command: `make`
 
 # Run
