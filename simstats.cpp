@@ -3,24 +3,35 @@
 
 #define NUM_AGENTS 1
 
-long factorial(long num);
+long factorial(int num);
 
-float erlang_c(int num_of_clients, float mean_service)
+// num agents is 1
+float erlang_c(int numClients, float meanService)
 {
-    float traffic_intensity = num_of_clients * (mean_service / 60); // Traffic intensity in Erlangs unit = clients * hour
+    // Convert mean service time to hours
+    float serviceHours = meanService / 60.0;
 
-    float erlang_numerator = (pow(traffic_intensity, NUM_AGENTS) / factorial(NUM_AGENTS)) * (NUM_AGENTS / (NUM_AGENTS - traffic_intensity));
+    // Calculate traffic intensity
+    float trafficIntensity = numClients * serviceHours;
 
-    float erlang_denominator_sum = 0.0;
-    for (size_t i = 0; i < NUM_AGENTS; i++)
+    // Calculate numerator
+    float numerator = std::pow(trafficIntensity, 1) / factorial(numClients);
+    numerator *= (numClients / (numClients - trafficIntensity));
+
+    // Calculate denominator
+    float denominatorSum = 0.0;
+    for (int i = 0; i < 1; ++i)
     {
-        erlang_denominator_sum += (pow(traffic_intensity, i) / (factorial(i)));
+        denominatorSum += std::pow(trafficIntensity, i) / factorial(i);
     }
 
-    return erlang_numerator / (erlang_denominator_sum + erlang_numerator);
+    // Calculate Erlang C
+    float erlangC = (numerator / (denominatorSum + numerator)) * 100;
+
+    return erlangC;
 }
 
-long factorial(long num)
+long factorial(int num)
 {
     if (num == 0 || num == 1)
         return 1;
