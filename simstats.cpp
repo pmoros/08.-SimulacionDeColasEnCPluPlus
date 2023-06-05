@@ -26,7 +26,7 @@ float erlang_c(int numClients, float meanService)
     }
 
     // Calculate Erlang C
-    float erlangC = (numerator / (denominatorSum + numerator)) * 100;
+    float erlangC = (numerator / (denominatorSum + numerator));
 
     return erlangC;
 }
